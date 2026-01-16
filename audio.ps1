@@ -30,5 +30,3 @@ if (Test-Path $file) {
 } else {
     Write-Host "Файлът не е изтеглен" -ForegroundColor Red
 }
-
-
